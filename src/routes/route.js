@@ -34,7 +34,7 @@ router.get('/hello', function(req, res){
 });
  router.get('/hello2', function(req,res){
      res.send(logger.duplicate());
- });
+ }); ""
 
  router.get('/hello3', function(req,res){
     res.send(logger.odd());
