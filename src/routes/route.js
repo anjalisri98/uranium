@@ -27,7 +27,7 @@ res.send(mov);
 router.get('/movies1/:id', function(req, res){
   for(let  i=0; i<=mov.length; i++){
     if(req.params.id>=0 && req.params.id<mov.length){
-      console.log(mov[req.params.id])
+      console.log(mov[req.params.id]);
       res.send(mov[req.params.id]);
     }else{
       res.send("not valid index number");
@@ -53,8 +53,8 @@ router.get('/movies1/:id', function(req, res){
     "name": "Finding Nemo"
    }]
    router.get('/films/:id1', function(req, res){
-    for( let i = 1; i<=movie.length; i++){
-        if(i==req.params.id1){
+    for( let i = 0; i<=movie.length; i++){
+        if(movie[i].id==req.params.id1){
         console.log(movie[i].name);
             res.send(movie[i].name);
 
@@ -62,12 +62,15 @@ router.get('/movies1/:id', function(req, res){
     }
 });
 
+
 router.get('/films1/:filmId', function(req, res){
   for(let i=0; i<=movie.length; i++){
-    if(i==req.params.filmId){
+    if(movie[i].id==req.params.filmId){
+      console.log(movie[i]);
       res.send(movie[i]);
-    }else {
-        res.send("No movie exists with this id");
+    }
+    else if(req.params.filmId>movie.length){
+      res.send("no such id exits");
     }
   }   
 
