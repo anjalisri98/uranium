@@ -4,77 +4,40 @@ const logger = require('./logger')
 
 const router = express.Router();
 
-router.get('/user-profile/:abcd', function(req, res) {
-    console.log(req)
-    console.log(req.params.abcd)
-    res.send('dummy response')
+router.get('/missing', function(req, res){
+  let a =[1,2,3,4,5,7,8,9]
+let sum1=0;
+let sum2=0;
+for (let i=0;i<a.length;i++)   //calculate sum of array
+{
+sum1=sum1+a[i];
+}
+for (let i=a[0];i<=a[(a.length)-1];i++)       //calculate value of i to find total sum
+{
+sum2=sum2+i;
+}
+let miss=sum2-sum1;
+console.log(sum2-sum1);       //difference of sums to find number
+
+return res.send({miss});
+});
+
+router.get('/missing1', function(req,res){
+  let b=[33,34,35,36,37,38,39,40,42];
+  let sum1=0;
+  let sum2=0;
+  for(let i=0; i<b.length; i+git add +){  
+    sum1=sum1+b[i]; 
+}
+for (let i=b[0];i<=b[(b.length)-1];i++)       //calculate value of i to find total sum
+{
+sum2=sum2+i;
+}
+let miss=sum2-sum1;
+console.log(sum2-sum1);       //difference of sums to find number
+res.send({miss});
+  
 })
-
-router.get('/test-me', function (req, res) {
-    console.log('------------------')
-    console.log(req)
-    console.log('------------------')
-    console.log('These are the request query parameters: ', req.query)
-    res.send('My first ever api!')
-});
-
-mov = ["rang de basanti", "the shining", "twinkle", "batman", "superman", "spiderman", "panda", "doggle", "vaspa", "stars"];
-  
-router.get('/movies', function(req, res){
-res.send(mov);
-}); 
- 
-router.get('/movies1/:id', function(req, res){
-  for(let  i=0; i<=mov.length; i++){
-    if(req.params.id>=0 && req.params.id<mov.length){
-      console.log(mov[req.params.id]);
-      res.send(mov[req.params.id]);
-    }else{
-      res.send("not valid index number");
-    }
-      
-      
-    }
-  
-});
-
-
-  movie = [ {
-    "id": 1,
-    "name": "The Shining"
-   }, {
-    "id": 2,
-    "name": "Incendies"
-   }, {
-    "id": 3,
-    "name": "Rang de Basanti"
-   }, {
-    "id": 4,
-    "name": "Finding Nemo"
-   }]
-   router.get('/films/:id1', function(req, res){
-    for( let i = 0; i<=movie.length; i++){
-        if(movie[i].id==req.params.id1){
-        console.log(movie[i].name);
-            res.send(movie[i].name);
-
-        }
-    }
-});
-
-
-router.get('/films1/:filmId', function(req, res){
-  for(let i=0; i<=movie.length; i++){
-    if(movie[i].id==req.params.filmId){
-      console.log(movie[i]);
-      res.send(movie[i]);
-    }
-    else if(req.params.filmId>movie.length){
-      res.send("no such id exits");
-    }
-  }   
-
-});
 
 
 
