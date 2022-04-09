@@ -1,4 +1,5 @@
 const express = require('express');
+const { route } = require('express/lib/application');
 
 const router = express.Router();
 
@@ -21,6 +22,11 @@ router.get('/test-api2', function (req, res) {
 
     res.send( { msg: "Hi FUnctionUp..again !"} )
 });
+
+router.post('/players', function(req, res){
+  
+})
+
 
 
 router.get('/test-api3', function (req, res) {
@@ -65,6 +71,9 @@ const randomController= require("../controllers/randomController.js")
 //write a post request to accept an element in post request body and add it to the given array and return the new array
 router.post('/test-post3', randomController.addToArray ); //HANDLER/CONTROLLER
 
+
+
+router.post('/players-1', randomController.addplayer);
 
 
 module.exports = router;
