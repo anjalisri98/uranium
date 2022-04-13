@@ -22,6 +22,15 @@ const createBook = async function (req, res){
 
 const bookList = async function(req, res){
     let bookList = await bookModel.find().select({bookName : true, authorname : true, _id : 0})
+//     let a=[]
+//     let b=[]
+//     let allUsers= await bookModel.find({})
+//     allUsers.forEach(items=>a.push(items.authorname))
+//     allUsers.forEach(items=>b.push(items.bookName))
+//     var result = a.reduce(function (result, field, index) {
+//         result[b[index]] = field;
+//         return result;
+// }, {})
     res.send({msg:bookList})
 }
 const getBooksInYear = async function(req, res){
