@@ -1,90 +1,156 @@
-const jwt = require("jsonwebtoken");
-const userModel = require("../models/userModel");
+const req = require("express/lib/request")
+const UserModel= require("../models/userModel")
+const productModel= require("../models/productModel")
+const orderModel= require("../models/orderModel")
+const userModel = require("../models/userModel")
+const res = require("express/lib/response")
 
-const createUser = async function (abcd, xyz) {
-  //You can name the req, res objects anything.
-  //but the first parameter is always the request 
-  //the second parameter is always the response
-  let data = abcd.body;
-  let savedData = await userModel.create(data);
-  console.log(abcd.newAtribute);
-  xyz.send({ msg: savedData });
-};
 
-const loginUser = async function (req, res) {
-  let userName = req.body.emailId;
-  let password = req.body.password;
 
-  let user = await userModel.findOne({ emailId: userName, password: password });
-  if (!user)
-    return res.send({
-      status: false,
-      msg: "username or the password is not corerct",
-    });
 
-  // Once the login is successful, create the jwt token with sign function
-  // Sign function has 2 inputs:
-  // Input 1 is the payload or the object containing data to be set in token
-  // The decision about what data to put in token depends on the business requirement
-  // Input 2 is the secret
-  // The same secret will be used to decode tokens
-  let token = jwt.sign(
-    {
-      userId: user._id.toString(),
-      batch: "thorium",
-      organisation: "FUnctionUp",
-    },
-    "functionup-thorium"
-  );
-  res.setHeader("x-auth-token", token);
-  res.send({ status: true, data: token });
-};
 
-const getUserData = async function (req, res) {
-  let token = req.headers["x-Auth-token"];
-  if (!token) token = req.headers["x-auth-token"];
+const createProduct = async function(req, res){
+    let data = req.body
+    let productdocument = await productModel.create(data)
+    res.send({msg: productdocument})
+}
 
-  //If no token is present in the request header return error
-  if (!token) return res.send({ status: false, msg: "token must be present" });
+const createUser = async function (req,res){
+    let requestBody= req.body
+    let headers= req.headers    
+    let appType = headers["isFreeAppUser"]
+    if(!appType){
+        let appType = headers["isfreeappuser"]
+        if(!appType){
+            res.send({status:false, msg:"A mandatory header is missing"})
+        }
+    }
+    let userdoc = await userModel.create(requestBody)
+    res.send({status: true, data: userdoc})
+}
 
-  console.log(token);
-  
-  // If a token is present then decode the token with verify function
-  // verify takes two inputs:
-  // Input 1 is the token to be decoded
-  // Input 2 is the same secret with which the token was generated
-  // Check the value of the decoded token yourself
-  let decodedToken = jwt.verify(token, "functionup-thorium");
-  if (!decodedToken)
-    return res.send({ status: false, msg: "token is invalid" });
 
-  let userId = req.params.userId;
-  let userDetails = await userModel.findById(userId);
-  if (!userDetails)
-    return res.send({ status: false, msg: "No such user exists" });
 
-  res.send({ status: true, data: userDetails });
-};
+const createOrder = async function (req, res){
+    let orderDetails= req.body
+    let headers= req.headers    
+    let appType = headers["isFreeAppUser"]
+    if(!appType){
+        let appType = headers["isfreeappuser"]
+    }
+    if(!appType){
+        return res.send({ status: false, msg: "A mandatory header is missing"})
+    }
+    let userId = orderDetails.user_id
+    let user = await userModel.findById(userId)
+    if(!user){
+        return res.send({status: false,msg:" user does'nt exists"})
+    }
+    let productId = orderDetails.product_id
+    let product = await productModel.findById(productId)
+    if(!product){
+        return res.send({ status: false, msg: "product doesnt exists"})
+    }
+    // let appType = Boolean(aapType) //this works on the truthy/falsy value
+     if(appTypeType == 'true'){
+         let appTypeFree = true
+     }else {
+         let appTypeFree = false
+     }
 
-const updateUser = async function (req, res) {
-// Do the same steps here:
-// Check if the token is present
-// Check if the token present is a valid token
-// Return a different error message in both these cases
+     //Scenario 1
+     if(!appTtypeFree && user.balance>= product.price){
+         user.balance = user.balanace - product.price
+         await user.save()
 
-  let userId = req.params.userId;
-  let user = await userModel.findById(userId);
-  //Return an error if no user with the given id exists in the db
-  if (!user) {
-    return res.send("No such user exists");
-  }
+        orderDetails.amount = product.price
+        orderDetails.isFreeAppUser = false 
+        
+        let orderCreated = await orderModel.create(orderDetails)
+        return res.send({status: true, data: orderCreated})
+     } else if(!appTypeFree){
+         //scenario 2
+         return res.send({ status: false, msg : " User does not have sufficient balance"})
 
-  let userData = req.body;
-  let updatedUser = await userModel.findOneAndUpdate({ _id: userId }, userData);
-  res.send({ status: updatedUser, data: updatedUser });
-};
+     }else {
+         orderDetails.amount = 0
+         orderDetails.isFreeAppUser= true 
+         let orderCreated = await orderModel.create(orderDetails)
+         res.send({ status: true, data: orderCreated})
+     }
+}
 
-module.exports.createUser = createUser;
-module.exports.getUserData = getUserData;
-module.exports.updateUser = updateUser;
-module.exports.loginUser = loginUser;
+module.exports.createProduct = createProduct
+module.exports.createUser = createUser
+module.exports.createOrder= createOrder  
+
+// const basicCode= async function(req, res) {
+//     let tokenDataInHeaders= req.headers.token
+//     console.log(tokenDataInHeaders)
+//     //counter
+//     console.log( "HEADER DATA ABOVE")
+//     console.log( "hey man, congrats you have reached the Handler")
+//     res.send({ msg: "This is coming from controller (handler)"})
+    
+//     }
+
+    // //Printing all the headers before modification - addition of a new header called 'month'
+    // console.log('Request headers are before: ', headers)
+
+    // //Accessing a request header called 'batch'
+    // let batchHeader = headers["batch"] // headers.batch 
+    
+    // ///Accessing a request header called 'content-type'
+    // let contentHeader = headers['content-type'] // headers.content-type
+
+    // console.log('Content Type hedser is: ',contentHeader)
+    // console.log('Batch header is: ', batchHeader)
+
+    // //Adding a new requets header
+    // req.headers["month"] = 'April' //req.headers.month = 'April' or req.headers["month"] = 'April'
+
+
+    // //Printing the headers after modification - addition of a new header called 'month'
+    // console.log('Request headers are after: ', headers)
+
+
+    // console.log('Request property called current-day', req['current-day'])
+    
+    // //Adding a response header
+    // res.header('year', '2022')
+
+    // res.send('Just create a user')
+// }
+
+// module.exports.createAUser = createAUser
+//  module.exports.basicCode = basicCode
+
+// const createUser= async function (req, res) {
+//     let data= req.body
+//     let savedData= await UserModel.create(data)
+//     res.send({msg: savedData})
+// }
+
+// const getUsersData= async function (req, res) {
+//     let allUsers= await UserModel.find()
+//     res.send({msg: allUsers})
+// }
+
+// module.exports.createUser= createUser
+// module.exports.getUsersData= getUsersData
+// module.exports.basicCode= basicCode
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
