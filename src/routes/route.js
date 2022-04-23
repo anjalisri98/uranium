@@ -3,9 +3,7 @@ const router = express.Router();
 const userController= require("../controllers/assignmentController")
 const mid = require("../middleware/commonMiddleware")
 
-router.get("/test-me", function (req, res) {
-    res.send("My first ever api!")
-})
+
 
 router.post("/users", userController.createUser )
 
